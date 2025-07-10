@@ -1,12 +1,11 @@
 "use client";
 import { RegisterAction } from "@/actions/auth.action";
 import Alert from "@/components/Alert";
+import SocialProviders from "@/components/SocialProviders";
 import Spinner from "@/components/Spinner";
 import { RegisterSchema } from "@/utils/ValidationSchemes";
 import { useState } from "react";
 import { BsPersonPlus } from "react-icons/bs";
-import { FaGithub } from "react-icons/fa";
-import { FcGoogle } from "react-icons/fc";
 export default function RegisterForm() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -101,14 +100,7 @@ export default function RegisterForm() {
             </>
           )}
         </button>
-        <div className=" w-full flex justify-items-center gap-6 mb-6 ">
-          <div className="rounded border bg-blue-100 hover:bg-blue-300 cursor-pointer text-2xl w-1/2 px-4 py-2 flex items-center justify-center ">
-            <FcGoogle className="text-4xl " />
-          </div>
-          <div className="rounded border bg-slate-100 hover:bg-slate-300 cursor-pointer text-2xl w-1/2 px-4 py-2 flex items-center justify-center ">
-            <FaGithub className="text-4xl" />
-          </div>
-        </div>
+       <SocialProviders />
       </div>
     </form>
   );
