@@ -8,13 +8,11 @@ import Alert from "@/components/Alert";
 import Spinner from "@/components/Spinner";
 import { LoginAction } from "@/actions/auth.action";
 
-
 export default function LoginForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [clientError, setClientError] = useState("");
   const [serverError, setServerError] = useState("");
-  const [serverSuccess, setServerSuccess] = useState("");
   const [loading, setLoading] = useState(false);
   const formSubmitHandler = (e: React.FormEvent) => {
     e.preventDefault();
@@ -22,15 +20,12 @@ export default function LoginForm() {
     if (!validation.success) {
       return setClientError(validation.error.errors[0].message);
     }
-    LoginAction({ email, password }).then((result) => {
-      if (result?.error) setServerError(result.error);
-      if (result?.success) setServerSuccess(result.success);
-    });
+    setLoading(true);
 
-    setEmail("");
-    setPassword("");
-    setClientError("");
-    // setLoading(false);
+    LoginAction({ email, password }).then((result) => {
+      if (!result.success) setServerError(result.message);
+      setLoading(false);
+    });
   };
   return (
     <form action="" onSubmit={formSubmitHandler}>
@@ -47,6 +42,7 @@ export default function LoginForm() {
           className=" border border-slate-500 rounded-lg px-2 py-1 text-xl "
           value={email}
           onChange={(e) => setEmail(e.target.value)}
+          disabled={loading}
         />
         <label
           htmlFor="password"
@@ -60,12 +56,12 @@ export default function LoginForm() {
           className=" border border-slate-500 rounded-lg px-2 py-1 text-xl "
           value={password}
           onChange={(e) => setPassword(e.target.value)}
+          disabled={loading}
         />
         {/* alert message */}
         {(clientError || serverError) && (
           <Alert type="error" message={clientError || serverError} />
         )}
-        {serverSuccess && <Alert type="success" message={serverSuccess} />}
 
         <button
           disabled={loading}
