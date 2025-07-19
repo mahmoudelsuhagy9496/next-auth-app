@@ -9,8 +9,8 @@ export default async function ProfilePage() {
       {" "}
       {session?.user && (
         <><div>
-          <div className="w-full h-6 m-auto"><p >{JSON.stringify(session)}</p></div> 
-          <div  className="w-full h-6 m-5">Welcome to Profile Page ya {session?.user?.name} </div>
+          <div className="w-full h-6  mb-10 m-auto"><p >{JSON.stringify(session)}</p></div> 
+          <div  className="w-full h-6 mt-10">Welcome to Profile Page ya {session?.user?.name} </div>
           <form action={logoutAction}>
             <button
               type="submit"

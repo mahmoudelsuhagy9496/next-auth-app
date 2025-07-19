@@ -5,7 +5,7 @@
 // })
 
 import { z } from "zod";
-// logi schema 
+// logi schema
 export const LoginSchema = z.object({
   email: z.string().email({ message: "Invaild email" }),
   password: z
@@ -24,4 +24,9 @@ export const RegisterSchema = z.object({
   password: z
     .string()
     .min(6, { message: "Password must be at least 6 characters long" }),
+});
+
+// forgot schema
+export const ForgotPasswordSchema = z.object({
+  email: z.string().email({ message: "Invaild email" }),
 });

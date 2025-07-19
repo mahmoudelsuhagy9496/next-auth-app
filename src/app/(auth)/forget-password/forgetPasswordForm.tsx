@@ -1,39 +1,28 @@
 "use client";
 import React, { useState } from "react";
-import { IoMdLogIn } from "react-icons/io";
-import { LoginSchema } from "@/utils/ValidationSchemes";
+import {CiMail  } from "react-icons/ci";
 import Alert from "@/components/Alert";
 import Spinner from "@/components/Spinner";
-import { LoginAction } from "@/actions/auth.action";
-import SocialProviders from "@/components/SocialProviders";
 import Link from "next/link";
+import { ForgotPasswordSchema } from "@/utils/ValidationSchemes";
 
-export default function LoginForm() {
+export default function ForgetPasswordForm() {
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const [clientError, setClientError] = useState("");
   const [serverError, setServerError] = useState("");
   const [serverSuccess, setServerSuccess] = useState("");
   const [loading, setLoading] = useState(false);
   const formSubmitHandler = (e: React.FormEvent) => {
     e.preventDefault();
-    const validation = LoginSchema.safeParse({ email, password });
+    const validation = ForgotPasswordSchema.safeParse({ email});
     if (!validation.success) {
       return setClientError(validation.error.errors[0].message);
     }
-    setLoading(true);
-
-    LoginAction({ email, password }).then((result) => {
-      if (result.success) {
-        setClientError("");
-        setServerError("");
-        setEmail("");
-        setPassword("");
-        setServerSuccess(result.message);
-      }
-      if (!result.success) setServerError(result.message);
-      setLoading(false);
-    });
+    console.log(email);
+    
+return (
+    setClientError("")
+)
   };
   return (
     <form action="" onSubmit={formSubmitHandler}>
@@ -52,23 +41,7 @@ export default function LoginForm() {
           onChange={(e) => setEmail(e.target.value)}
           disabled={loading}
         />
-        <label
-          htmlFor="password"
-          className="font-bold text-slate-500 p-1 text-xl text-start"
-        >
-          Password :{" "}
-        </label>
-        <input
-          type="password"
-          id="password"
-          className=" border border-slate-500 rounded-lg px-2 py-1 text-xl "
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          disabled={loading}
-        />
-        <div className="my-2 ms-0 underline text-blue-600">
-          <Link href="/forget-password" > Forget Password </Link>
-        </div>
+
         {/* alert message */}
         {(clientError || serverError) && (
           <Alert type="error" message={clientError || serverError} />
@@ -84,12 +57,15 @@ export default function LoginForm() {
           ) : (
             <>
               {" "}
-              <IoMdLogIn className="me-1 text-2xl" /> Login{" "}
+              <CiMail className="me-1 text-2xl" /> Submit{" "}
             </>
           )}
         </button>
-        <SocialProviders />
+        <div className="p-1 mt-2">
+            <Link href="/login">Back to login</Link>
+        </div>
       </div>
     </form>
   );
 }
+

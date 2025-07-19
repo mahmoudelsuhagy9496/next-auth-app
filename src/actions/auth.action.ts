@@ -6,6 +6,8 @@ import { z } from "zod";
 import * as bcrypt from "bcryptjs";
 import { signIn, signOut } from "@/auth";
 import { AuthError } from "next-auth";
+import { generateverificationToken } from "@/utils/generateToken";
+import { sendVerificationToken } from "@/utils/mails";
 // type LoginDto = z.infer<typeof LoginSchema>;
 
 //Login action
@@ -15,15 +17,30 @@ export const LoginAction = async (data: z.infer<typeof LoginSchema>) => {
     return { success: false, message: "Invalid credentials " };
   }
   const { email, password } = validation.data;
+  const user = await prisma.user.findUnique({ where: { email } });
+  if (!user || !user.email || !user.password)
+    return { success: false, message: "Invalid credentials " };
+
   try {
+    if (!user.emailVerified) {
+      const verificationToken = await generateverificationToken(email);
+      await sendVerificationToken(
+        verificationToken.email,
+        verificationToken.token
+      );
+      return { success: true, message: "Email sent . verify your email" };
+    }
     await signIn("credentials", { email, password, redirectTo: "/profile" });
   } catch (error) {
     if (error instanceof AuthError) {
+                    console.error("Verification Error:", error);
+
       switch (error.type) {
         case "CredentialsSignin":
           return { success: false, message: "invalid email or password" };
         default:
-          return { success: false, message: " something went wrong" };
+
+          return { success: false, message: " something  wrong" };
       }
     }
     throw error;
@@ -48,15 +65,20 @@ export const RegisterAction = async (data: z.infer<typeof RegisterSchema>) => {
     const hashpassword = await bcrypt.hash(password, salt);
 
     await prisma.user.create({ data: { name, email, password: hashpassword } });
-      return { success: true, message: "Registered  successfully" };
-
+    const verificationToken = await generateverificationToken(email);
+    await sendVerificationToken(
+      verificationToken.email,
+      verificationToken.token
+    );
+    return { success: true, message: "Email sent . verify your email" };
   } catch (error: unknown) {
     console.log(error);
-    
-        return { success: false, message: "something went wrong ,please try again" };
 
+    return {
+      success: false,
+      message: "something went wrong ,please try again",
+    };
   }
-
 };
 
 //logout action
