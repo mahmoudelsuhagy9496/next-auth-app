@@ -8,10 +8,11 @@ import { signIn, signOut } from "@/auth";
 import { AuthError } from "next-auth";
 import { generateverificationToken } from "@/utils/generateToken";
 import { sendVerificationToken } from "@/utils/mails";
+import { ActionType } from "@/utils/types";
 // type LoginDto = z.infer<typeof LoginSchema>;
 
 //Login action
-export const LoginAction = async (data: z.infer<typeof LoginSchema>) => {
+export const LoginAction = async (data: z.infer<typeof LoginSchema>):Promise<ActionType> => {
   const validation = LoginSchema.safeParse(data);
   if (!validation.success) {
     return { success: false, message: "Invalid credentials " };
@@ -50,7 +51,7 @@ export const LoginAction = async (data: z.infer<typeof LoginSchema>) => {
 };
 
 //register action
-export const RegisterAction = async (data: z.infer<typeof RegisterSchema>) => {
+export const RegisterAction = async (data: z.infer<typeof RegisterSchema>):Promise<ActionType> => {
   const validation = RegisterSchema.safeParse(data);
   if (!validation.success) {
     return { success: false, message: "Invalid credentials " };
@@ -82,6 +83,6 @@ export const RegisterAction = async (data: z.infer<typeof RegisterSchema>) => {
 };
 
 //logout action
-export const logoutAction = async () => {
+export const logoutAction = async ():Promise<void> => {
   await signOut();
 };

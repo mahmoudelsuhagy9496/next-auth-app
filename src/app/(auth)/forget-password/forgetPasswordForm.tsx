@@ -1,10 +1,11 @@
 "use client";
 import React, { useState } from "react";
-import {CiMail  } from "react-icons/ci";
+import { CiMail } from "react-icons/ci";
 import Alert from "@/components/Alert";
 import Spinner from "@/components/Spinner";
 import Link from "next/link";
 import { ForgotPasswordSchema } from "@/utils/ValidationSchemes";
+import { forgotPasswordAction } from "@/actions/password.action";
 
 export default function ForgetPasswordForm() {
   const [email, setEmail] = useState("");
@@ -14,15 +15,28 @@ export default function ForgetPasswordForm() {
   const [loading, setLoading] = useState(false);
   const formSubmitHandler = (e: React.FormEvent) => {
     e.preventDefault();
-    const validation = ForgotPasswordSchema.safeParse({ email});
+    const validation = ForgotPasswordSchema.safeParse({ email });
     if (!validation.success) {
       return setClientError(validation.error.errors[0].message);
     }
-    console.log(email);
-    
-return (
-    setClientError("")
-)
+    setLoading(true);
+    forgotPasswordAction({ email })
+      .then((res) => {
+        if (res.success) {
+          setClientError("");
+          setServerError("");
+          setEmail("");
+          setServerSuccess(res.message);
+        }
+        if (!res.success) {
+          setServerSuccess("");
+          setServerError(res.message);
+        }
+        setLoading(false);
+      })
+      .catch(() => {
+        setServerError("Somethin went wrong");
+      });
   };
   return (
     <form action="" onSubmit={formSubmitHandler}>
@@ -62,10 +76,9 @@ return (
           )}
         </button>
         <div className="p-1 mt-2">
-            <Link href="/login">Back to login</Link>
+          <Link href="/login">Back to login</Link>
         </div>
       </div>
     </form>
   );
 }
-

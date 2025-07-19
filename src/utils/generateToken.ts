@@ -25,20 +25,20 @@ export const generateverificationToken = async (email: string) => {
 
 //generate Forgot Password token
 export const generateForgotPasswordToken = async (email: string) => {
-  const VerificationToken = await prisma.verificationToken.findFirst({
+  const ForgotPasswordToken = await prisma.resetPasswordToken.findFirst({
     where: { email },
   });
-  if (VerificationToken)
-    await prisma.verificationToken.delete({
-      where: { id: VerificationToken.id },
+  if (ForgotPasswordToken)
+    await prisma.resetPasswordToken.delete({
+      where: { id: ForgotPasswordToken.id },
     });
 
-  const newVerificationToken = await prisma.verificationToken.create({
+  const newForgotPasswordToken = await prisma.resetPasswordToken.create({
     data: {
       token: randomUUID(),
       expires: new Date(new Date().getTime() + 3600 * 1000 * 2),
       email,
     },
   });
-  return newVerificationToken;
+  return newForgotPasswordToken;
 };
